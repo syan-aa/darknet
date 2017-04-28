@@ -10,6 +10,12 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
+#ifdef OPENCV
+#include "opencv2/highgui/highgui_c.h"
+#include "opencv2/imgproc/imgproc_c.h"
+#endif
+
+
 int windows = 0;
 
 float colors[6][3] = { {1,0,1}, {0,0,1},{0,1,1},{0,1,0},{1,1,0},{1,0,0} };
@@ -427,7 +433,7 @@ void show_image_cv(image p, const char *name)
 
     IplImage *disp = cvCreateImage(cvSize(p.w,p.h), IPL_DEPTH_8U, p.c);
     int step = disp->widthStep;
-    cvNamedWindow(buff, CV_WINDOW_NORMAL); 
+    //cvNamedWindow(buff, CV_WINDOW_NORMAL); 
     //cvMoveWindow(buff, 100*(windows%10) + 200*(windows/10), 100*(windows%10));
     ++windows;
     for(y = 0; y < p.h; ++y){
@@ -450,8 +456,29 @@ void show_image_cv(image p, const char *name)
         cvResize(buffer, disp, CV_INTER_LINEAR);
         cvReleaseImage(&buffer);
     }
-    cvShowImage(buff, disp);
-    cvReleaseImage(&disp);
+    //cvShowImage(buff, disp);
+
+    {
+       CvSize size;
+       {
+           size.width = disp->width, size.height = disp->height;
+       }
+
+       static CvVideoWriter* output_video = NULL;    // cv::VideoWriter output_video;
+       if (output_video == NULL)
+       {
+           printf("\n SRC output_video = %p \n", output_video);
+           const char* output_name = "test_dnn_out.avi";
+           //output_video = cvCreateVideoWriter(output_name, CV_FOURCC('H', '2', '6', '4'), 25, size, 1);
+           output_video = cvCreateVideoWriter(output_name, CV_FOURCC('D', 'I', 'V', 'X'), 25, size, 1);
+           //output_video = cvCreateVideoWriter(output_name, CV_FOURCC('M', 'J', 'P', 'G'), 25, size, 1);
+           printf("\n cvCreateVideoWriter, DST output_video = %p  \n", output_video);
+       }
+
+       cvWriteFrame(output_video, disp);
+       printf("\n cvWriteFrame \n");
+    }
+    //cvReleaseImage(&disp);
 }
 #endif
 
