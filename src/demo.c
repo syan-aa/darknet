@@ -40,7 +40,12 @@ void *fetch_in_thread(void *ptr)
 {
     in = get_image_from_stream(cap);
     if(!in.data){
-        error("Stream closed.");
+        #ifdef SHOWIMAGE
+            error("Stream closed.\n");
+        #else
+            printf("Stream closed.\n");
+            exit(0);
+        #endif
     }
     in_s = letterbox_image(in, net.w, net.h);
     return 0;
@@ -182,7 +187,8 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
             if(!prefix){
                 show_image(disp, "Demo");
                 int c = cvWaitKey(1);
-		if (c != -1) c = c%256;
+
+                if (c != -1) c = c%256;
                 if (c == 10){
                     if(frame_skip == 0) frame_skip = 60;
                     else if(frame_skip == 4) frame_skip = 0;

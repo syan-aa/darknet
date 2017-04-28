@@ -433,8 +433,12 @@ void show_image_cv(image p, const char *name)
 
     IplImage *disp = cvCreateImage(cvSize(p.w,p.h), IPL_DEPTH_8U, p.c);
     int step = disp->widthStep;
-    //cvNamedWindow(buff, CV_WINDOW_NORMAL); 
-    //cvMoveWindow(buff, 100*(windows%10) + 200*(windows/10), 100*(windows%10));
+    
+    #ifdef SHOWIMAGE
+        cvNamedWindow(buff, CV_WINDOW_NORMAL); 
+        //cvMoveWindow(buff, 100*(windows%10) + 200*(windows/10), 100*(windows%10));
+    #endif
+    
     ++windows;
     for(y = 0; y < p.h; ++y){
         for(x = 0; x < p.w; ++x){
@@ -456,7 +460,9 @@ void show_image_cv(image p, const char *name)
         cvResize(buffer, disp, CV_INTER_LINEAR);
         cvReleaseImage(&buffer);
     }
-    //cvShowImage(buff, disp);
+    #ifdef SHOWIMAGE
+        cvShowImage(buff, disp);
+    #endif
 
     {
        CvSize size;
@@ -478,7 +484,10 @@ void show_image_cv(image p, const char *name)
        cvWriteFrame(output_video, disp);
        printf("\n cvWriteFrame \n");
     }
-    //cvReleaseImage(&disp);
+
+    #ifdef SHOWIMAGE
+        cvReleaseImage(&disp);
+    #endif
 }
 #endif
 
