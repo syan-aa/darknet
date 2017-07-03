@@ -8,4 +8,4 @@ else
 fi
 
 ./darknet detector demo cfg/coco.data cfg/yolo.cfg models/yolo.weights $videopath
-ffmpeg -i test_dnn_out.avi -c:a aac -b:a 128k -c:v libx264 -crf 23 /ds_shared/MKT/recognition_videos/output.mp4
+ffmpeg -i test_dnn_out.avi -c:a aac -b:a 128k -c:v libx264 -crf 23 ./results/output.mp4
